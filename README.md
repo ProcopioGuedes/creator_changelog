@@ -218,8 +218,13 @@ Agora vou buscar as releases para estruturar o changelog por versão.
 ---
 
 *Projeto desenvolvido para a disciplina de Engenharia de Software com IA Generativa*
-*Por*
+
+**Por:**
+
 Fernanda Guimarães Costa
+
 Monica de Faria Silva
+
 Procópio Victor Lacerda Guedes
+
 # creator_changelog
