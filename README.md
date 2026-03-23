@@ -61,7 +61,8 @@ os commits de um repositório GitHub e gera um `CHANGELOG.md` estruturado, categ
 | `get_repo_info` | Metadados do repositório (linguagem, estrelas, etc.) |
 | `get_releases` | Releases e tags para estruturar por versão |
 | `get_commits` | Lista de commits com filtros por data/branch |
-| `get_commit_detail` | Detalhes de um commit (arquivos, diff, estatísticas) |
+| `get_commit_detail` | Detalhes de um commit (arquivos, diffs reais, estatísticas) |
+| `analyze_commit_changes` | **⭐ Analisa inteligentemente os diffs para extrair resumo preciso das mudanças** |
 | `save_changelog` | Salva o CHANGELOG.md gerado em disco |
 
 ---
@@ -124,15 +125,17 @@ O agente gera um `CHANGELOG.md` seguindo o padrão
 [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/) com categorias baseadas
 em [Conventional Commits](https://www.conventionalcommits.org/):
 
-| Categoria | Prefixo de Commit |
-|---|---|
-| ✨ **Added** | `feat:` |
-| 🐛 **Fixed** | `fix:` |
-| 🔧 **Changed** | `refactor:`, `perf:`, `style:` |
-| 🗑️ **Removed** | commits com breaking changes |
-| 🔒 **Security** | `security:` ou patches CVE |
-| 📦 **Dependencies** | `chore:`, `deps:` |
-| 📝 **Docs** | `docs:` |
+| Categoria | Prefixo de Commit | Baseado em |
+|---|---|---|
+| ✨ **Added** | `feat:` | Análise de diffs + mensagem |
+| 🐛 **Fixed** | `fix:` | Análise de diffs + mensagem |
+| 🔧 **Changed** | `refactor:`, `perf:`, `style:` | Análise de diffs + mensagem |
+| 🗑️ **Removed** | commits com breaking changes | Análise de diffs |
+| 🔒 **Security** | `security:` ou patches CVE | Análise de diffs |
+| 📦 **Dependencies** | `chore:`, `deps:` | Análise de diffs + mensagem |
+| 📝 **Docs** | `docs:` | Arquivos modificados |
+
+⭐ **Diferencial:** O agent não apenas lê a mensagem do commit, mas **analisa os diffs reais** para garantir categorização precisa e resumos acertivos.
 
 ---
 
@@ -154,7 +157,10 @@ changelog_agent/
 - `tool_*` — Implementações reais que chamam a GitHub REST API v3
 - `run_tool()` — Dispatcher que mapeia nome → função
 - `run_agent()` — Loop ReAct com histórico de mensagens e integração com Gemini 2.5 Flash
-- `SYSTEM_PROMPT` — Instruções para o modelo seguir o padrão ReAct com qualidade
+- `SYSTEM_PROMPT` — Instruções para o modelo seguir o padrão ReAct com análise de diffs
+
+**⭐ Destaque:**
+- `tool_analyze_commit_changes()` — Usa Gemini para analisar inteligentemente os diffs reais e extrair resumos precisos das mudanças realizadas
 
 ---
 
