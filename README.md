@@ -2,7 +2,7 @@
 
 > **Trabalho Prático — Engenharia de Software com IA Generativa**  
 > Implementação de um Agente ReAct (Reasoning + Acting) aplicado a Engenharia de Software  
-> **Powered by:** Google Gemini 2.0 Flash ⚡
+> **Powered by:** Google Gemini 2.5 Flash ⚡
 
 ---
 
@@ -70,7 +70,7 @@ os commits de um repositório GitHub e gera um `CHANGELOG.md` estruturado, categ
 
 ### Pré-requisitos
 - Python 3.10+
-- Conta OpenAI (API Key)
+- Conta Google Cloud (API Key - Gemini)
 - Token GitHub (opcional, mas recomendado para evitar rate limit)
 
 ### Passos
@@ -83,8 +83,7 @@ cd changelog_agent
 pip install -r requirements.txt
 
 # 3. Configure as variáveis de ambiente
-export OPENAI_API_KEY="sk-proj-..."
-export OPENAI_MODEL="gpt-4.1"     # opcional
+export GOOGLE_API_KEY="sua_chave_gemini"
 export GITHUB_TOKEN="ghp_..."        # opcional, mas evita rate limit
 ```
 
@@ -151,11 +150,11 @@ changelog_agent/
 ### Componentes Principais
 
 **`agent.py`** contém:
-- `TOOLS` — Definição das ferramentas no formato JSON Schema (Anthropic Tool Use)
+- `TOOLS` — Definição das ferramentas no formato Google Generative AI (types.Tool)
 - `tool_*` — Implementações reais que chamam a GitHub REST API v3
 - `run_tool()` — Dispatcher que mapeia nome → função
-- `run_agent()` — Loop ReAct com histórico de mensagens
-- `SYSTEM_PROMPT` — Instruções para o modelo seguir o padrão ReAct
+- `run_agent()` — Loop ReAct com histórico de mensagens e integração com Gemini 2.5 Flash
+- `SYSTEM_PROMPT` — Instruções para o modelo seguir o padrão ReAct com qualidade
 
 ---
 
@@ -166,8 +165,8 @@ O agente intercala **pensamento** (`Thought`) com **ações** (`Action`) e anali
 permitindo raciocínio encadeado e adaptativo.
 
 ### Tool Use / Function Calling
-O modelo chama ferramentas externas (GitHub API) de forma estruturada, recebendo resultados
-reais para embasar suas decisões — não há alucinações sobre dados do repositório.
+O modelo Gemini chama ferramentas externas (GitHub API) de forma estruturada através de `function_call`,
+recebendo resultados reais para embasar suas decisões — não há alucinações sobre dados do repositório.
 
 ### Chain of Thought
 O `SYSTEM_PROMPT` induz o modelo a explicitar seu raciocínio antes de agir,
@@ -200,9 +199,16 @@ Preciso primeiro entender o repositório. Vou obter suas informações gerais.
 Agora vou buscar as releases para estruturar o changelog por versão.
 
 ⚡ ACTION: get_releases({"owner": "microsoft", "repo": "vscode"})
-...
+👁️  OBSERVATION: {"releases": [{"tag": "1.96.0", "name": "January 2025", ...}]}
 
-✅ Agente concluiu após 8 iterações.
+─── Iteração 3/15 ──────────────────────────────────────
+💭 THOUGHT:
+Vou listar os commits recentes para entender as mudanças.
+
+⚡ ACTION: get_commits({"owner": "microsoft", "repo": "vscode", "branch": "main", "per_page": 30})
+👁️  OBSERVATION: {"commits": [...], "total": 30}
+
+✅ Agente concluiu após 5 iterações.
 📄 Changelog salvo em: /path/to/CHANGELOG.md
 ```
 
@@ -210,10 +216,11 @@ Agora vou buscar as releases para estruturar o changelog por versão.
 
 ## 📝 Observações Técnicas
 
-- O agente usa o modelo **`claude-opus-4-5`** via API Anthropic
+- O agente usa o modelo **`Gemini 2.5 Flash`** via Google Generative AI (API 0.8.3)
 - A GitHub API tem rate limit de **60 req/hora** sem token e **5.000 req/hora** com token
 - O `max_iterations=15` evita loops infinitos; ajuste conforme necessário
 - Commits com diffs muito grandes são truncados a 500 caracteres por arquivo
+- O histórico de mensagens é mantido para contexto acumulado entre iterações ReAct
 
 ---
 
@@ -221,10 +228,10 @@ Agora vou buscar as releases para estruturar o changelog por versão.
 
 **Por:**
 
-Fernanda Guimarães Costa
+Fernanda Guimarães Costa, Matricula: 229210
 
-Monica de Faria Silva
+Monica de Faria Silva, Matricula: 229209
 
-Procópio Victor Lacerda Guedes
+Procópio Victor Lacerda Guedes, Matricula: 229591
 
 # creator_changelog
