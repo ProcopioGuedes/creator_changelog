@@ -70,23 +70,52 @@ os commits de um repositório GitHub e gera um `CHANGELOG.md` estruturado, categ
 ## ⚙️ Instalação
 
 ### Pré-requisitos
-- Python 3.10+
+- **Python 3.10+** ([Download](https://www.python.org/downloads/))
 - Conta Google Cloud (API Key - Gemini)
 - Token GitHub (opcional, mas recomendado para evitar rate limit)
 
-### Passos
+### 🚀 Setup Automático (Recomendado)
+
+Execute o script de setup que configura tudo automaticamente:
 
 ```bash
-# 1. Clone ou copie os arquivos do projeto
-cd changelog_agent
-
-# 2. Instale as dependências
-pip install -r requirements.txt
-
-# 3. Configure as variáveis de ambiente
-export GOOGLE_API_KEY="sua_chave_gemini"
-export GITHUB_TOKEN="ghp_..."        # opcional, mas evita rate limit
+python setup_environment.py
 ```
+
+O script irá:
+- ✅ Verificar Python 3.10+
+- ✅ Criar ambiente virtual (venv)
+- ✅ Instalar todas as dependências
+- ✅ Criar arquivo `.env`
+- ✅ Validar a instalação
+- ✅ Testar se o agent funciona
+
+**Tempo:** ~30 segundos
+
+### 📝 Próximos Passos
+
+1. Configure suas chaves de API no arquivo `.env`:
+   ```bash
+   nano .env
+   ```
+   
+   Adicione:
+   ```
+   GOOGLE_API_KEY=sua_chave_gemini_aqui
+   GITHUB_TOKEN=seu_token_github_aqui
+   ```
+
+2. Ative o ambiente virtual:
+   ```bash
+   source venv/bin/activate        # Linux/macOS
+   # ou
+   venv\Scripts\activate.bat        # Windows
+   ```
+
+3. Use o agent:
+   ```bash
+   python agent.py
+   ```
 
 ---
 
